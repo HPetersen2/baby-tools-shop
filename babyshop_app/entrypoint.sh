@@ -92,6 +92,4 @@ for p in products:
     )
 EOF
 
-python manage.py &
-
-exec gunicorn babyshop.wsgi:application --bind 0.0.0.0:8025 --reload
+exec gunicorn babyshop.wsgi:application --bind 0.0.0.0:$PORT --reload
