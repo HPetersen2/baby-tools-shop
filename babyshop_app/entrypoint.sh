@@ -2,6 +2,7 @@
 
 set -e
 
+python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
 
@@ -25,9 +26,8 @@ else:
 
 from products.models import Category, Product
 from decimal import Decimal
-from datetime import date
 
-# Kategorien anlegen
+# Kategorien
 categories = [
     {'name': 'Anne Besinleri', 'slug': 'anne-besinleri'},
     {'name': 'Bebek Besinleri', 'slug': 'bebek-besinleri'},
@@ -37,69 +37,59 @@ categories = [
     {'name': 'Hamile Kiyafetleri', 'slug': 'hamile-kiyafetleri'}
 ]
 
-# Kategorien erstellen
-for category_data in categories:
-    category, created = Category.objects.get_or_create(
-        name=category_data['name'],
-        slug=category_data['slug']
-    )
-    if created:
-        print(f"Kategorie '{category.name}' wurde erfolgreich erstellt.")
+for c in categories:
+    Category.objects.get_or_create(name=c['name'], slug=c['slug'])
 
-# Produkte anlegen
+# Produkte (WICHTIG: KEIN "media/" im Pfad!)
 products = [
     {
         'name': 'Süt 1 lt Yüksek Kalsiyum Değerleri',
         'description': 'Yüksek kalsiyum değerli, koruyucu içermeyen süt.',
+        'image': 'products/Süt.png',
         'price': Decimal('9.99'),
         'category_slug': 'anne-besinleri',
     },
     {
         'name': 'Bebek Diş Fırçası, Alerjen Madde Bulunmaz',
-        'description': 'Bebekler için özel olarak tasarlanmış diş fırçası. Damak yapısını incitmez ve ileride oluşabilecek sorunlara karşı korur.',
+        'description': 'Bebekler için özel olarak tasarlanmış diş fırçası.',
+        'image': 'products/Bebek Alerjen.png',
         'price': Decimal('39.90'),
         'category_slug': 'bebek-gerecleri',
     },
     {
         'name': 'Bebek Yürüteci Ayarlanabilir Boylu',
-        'description': 'Ayarlanabilir boyun ölçüsü ve güvenlik özellikleriyle bebekler için ideal yürüteç.',
+        'description': 'Ayarlanabilir boylu güvenli yürüteç.',
+        'image': 'products/Yürüteci.png',
         'price': Decimal('399.90'),
         'category_slug': 'bebek-gerecleri',
     },
     {
-        'name': 'Hamile Kıyafeti, Rahat ve Şık',
-        'description': 'Bedeninize uyum sağlayan, rahat ve şık hamile kıyafeti. Günlük kullanım için ideal.',
-        'price': Decimal('129.99'),
-        'category_slug': 'hamile-kiyafetleri',
-    },
-    {
         'name': 'Bebek Uyku Seti, Yumuşak ve Güvenli',
-        'description': 'Bebeklerin güvenli uyuması için tasarlanmış, yumuşak ve rahat uyku seti.',
+        'description': 'Rahat ve yumuşak bebek uyku seti.',
+        'image': 'products/Uyku.png',
         'price': Decimal('59.90'),
         'category_slug': 'bebek-kiyafetleri',
     },
     {
         'name': 'Bebek Oyuncağı, Renkli Plastik Top',
-        'description': 'Bebeklerin gelişimi için eğlenceli ve renkli plastik top. Dayanıklı ve güvenli malzemeden üretilmiştir.',
+        'description': 'Renkli eğitici plastik oyuncak top.',
+        'image': 'products/Oyuncagi.png',
         'price': Decimal('19.99'),
         'category_slug': 'bebek-oyuncaklari',
     }
 ]
 
-# Produkte erstellen
-for product_data in products:
-    category = Category.objects.get(slug=product_data['category_slug'])
-    
-    product, created = Product.objects.get_or_create(
-        name=product_data['name'],
-        description=product_data['description'],
-        price=product_data['price'],
-        category=category
+for p in products:
+    category = Category.objects.get(slug=p['category_slug'])
+    Product.objects.get_or_create(
+        name=p['name'],
+        defaults={
+            'description': p['description'],
+            'price': p['price'],
+            'category': category,
+            'image': p['image'],
+        }
     )
-    
-    if created:
-        print(f"Produkt '{product.name}' wurde erfolgreich erstellt.")
-
 EOF
 
 python manage.py &
