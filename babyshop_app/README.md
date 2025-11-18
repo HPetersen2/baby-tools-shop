@@ -21,14 +21,13 @@ A Django-based e-commerce web application for baby products, containerized with 
 This repository contains a complete e-commerce platform specifically designed for baby tools and products. The application is built with Django and follows modern web development practices. The project is fully containerized using Docker, making it easy to set up, deploy, and maintain across different environments.
 
 **Key Features:**
-- Full e-commerce functionality for baby products
 - Django-powered backend with Python 3.9
 - SQLite3 database for lightweight data storage
 - Containerized architecture for consistent deployment
 - Easy local development setup
 
 **Purpose:**
-This repository serves as a production-ready e-commerce solution for businesses selling baby tools and accessories, with a focus on maintainability and scalability.
+This repository serves as a e-commerce solution for businesses selling baby tools and accessories, with a focus on maintainability and scalability.
 
 ## Technologies
 
@@ -58,11 +57,11 @@ Get the application running in just a few steps:
 
 3. Build and run the container:
 ```bash
-   docker build -t babyshop -f Dockerfile .
-   docker run -it --rm -p 8000:8000 babyshop
+   docker build -t <containername> -f Dockerfile .
+   docker run -it --rm -p <HOST MACHINE PORT>:<CONTAINER PORT> <containername>
 ```
 
-4. Open your browser and navigate to `http://localhost:8000`
+4. Open your browser and navigate to `http://localhost:8025`
 
 ## Usage
 
@@ -90,9 +89,8 @@ Download and install Docker Desktop from the [official Docker website](https://d
 
 Launch Docker Desktop and ensure it's running before proceeding. You should see the Docker icon in your system tray/menu bar.
 
-#### 4. Configure Line Endings (Important!)
-
-Before building the Docker container, you must change the line ending format of `entrypoint.sh` to LF (Line Feed).
+> [!IMPORTANT]  
+> Before building the Docker container, you must change the line ending format of `entrypoint.sh` to LF (Line Feed).
 
 **In VS Code:**
 1. Open the `entrypoint.sh` file
@@ -100,7 +98,9 @@ Before building the Docker container, you must change the line ending format of 
 3. Click on "CRLF" or "LF" indicator
 4. Select "LF" from the dropdown menu
 
-![Line Ending Configuration](https://via.placeholder.com/800x400?text=VS+Code+Line+Ending+Screenshot)
+![Line Feed Configuration](screenshot_configuration_line feed/2025-11-18_12h06_13.png)
+
+![Line Feed Configuration](screenshot_configuration_line feed/2025-11-18_12h06_56.png)
 
 *Screenshot: Changing line endings in VS Code - click the "CRLF"/"LF" indicator in the bottom-right corner*
 
@@ -108,16 +108,14 @@ Before building the Docker container, you must change the line ending format of 
 
 Build the Docker image with the following command:
 ```bash
-docker build -t babyshop -f Dockerfile .
+docker build -t <containername> -f Dockerfile .
 ```
-
-Replace `babyshop` with your preferred container name if desired.
 
 #### 6. Start the Application
 
 Run the Docker container:
 ```bash
-docker run -it --rm -p 8000:8000 babyshop
+docker run -it --rm -p <HOST MACHINE PORT>:<CONTAINER PORT> <containername>
 ```
 
 **Command explanation:**
@@ -126,7 +124,7 @@ docker run -it --rm -p 8000:8000 babyshop
 - `-p 8000:8000`: Map port 8000 from container to your local machine
 - `babyshop`: The container name from step 5
 
-The application will now be accessible at `http://localhost:8000`
+The application will now be accessible at `http://localhost:8025`
 
 ## Configuration
 
