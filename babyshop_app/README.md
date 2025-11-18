@@ -10,7 +10,6 @@ A Django-based e-commerce web application for baby products, containerized with 
   - [Prerequisites](#prerequisites)
   - [Installation Steps](#installation-steps)
   - [Running the Application](#running-the-application)
-  - [Creating a Superuser and Adding Sample Data](#creating-a-superuser-and-adding-sample-data)
 - [Deployment](#deployment)
   - [Local Development](#local-development)
   - [V-Server Production Deployment](#v-server-production-deployment)
@@ -22,22 +21,20 @@ A Django-based e-commerce web application for baby products, containerized with 
 - [Project Structure](#project-structure)
 - [Tech Stack](#tech-stack)
 - [Security Notes](#security-notes)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Description
 
-This repository contains a containerized Django e-commerce application specifically designed for baby tools and products. The project demonstrates modern DevSecOps practices by packaging a Django application into a Docker container for consistent deployment across different environments.
+This repository contains a containerized Django e-commerce application for baby tools and products. The project demonstrates the containerization of a Django application using Docker.
 
 **Repository Contents:**
-- Complete Django web application (Python 3.9, Django 4.0.2)
-- Dockerfile and container configuration
-- SQLite3 database setup
-- Admin interface for managing products and categories
-- Production-ready deployment scripts
+- Django web application (Python 3.9, Django 4.0.2)
+- Dockerfile for containerization
+- SQLite3 database configuration
+- Production-ready deployment configuration
 
 **Purpose:**
-This repository serves as a practical implementation of containerization principles in a DevSecOps context. It provides a fully functional e-commerce solution that can be deployed locally for development or on a virtual machine for production use. The containerized approach ensures consistency, portability, and simplified deployment workflows.
+This repository showcases the containerization of a Django application using Docker. The containerized approach enables consistent deployment across different environments, from local development to production on a V-Server.
 
 ## Quickstart
 
@@ -124,11 +121,6 @@ Launch Docker Desktop and ensure it's running before proceeding. You should see 
 
 *Screenshot: Changing line endings in VS Code - click the "CRLF"/"LF" indicator in the bottom-right corner*
 
-**Alternative (command line on Linux/Mac):**
-```bash
-dos2unix entrypoint.sh
-```
-
 #### 5. Build the Docker Image
 
 Build the Docker image with the following command:
@@ -165,59 +157,6 @@ docker run -d --restart=always --name <container-name> -p <host-port>:<container
 
 See the [Deployment](#deployment) section below for detailed instructions and examples.
 
-### Creating a Superuser and Adding Sample Data
-
-After starting the application, you can create a Django superuser and add sample products:
-
-#### 1. Access the Running Container
-
-**If running in interactive mode:**
-The terminal is already attached to the container. Open a new terminal window and execute:
-```bash
-docker exec -it <container-name> bash
-```
-
-**If running in detached mode:**
-```bash
-docker exec -it <container-name> bash
-```
-
-Replace `<container-name>` with the name you assigned to your container.
-
-#### 2. Create a Superuser
-
-Inside the container shell, run:
-```bash
-python manage.py createsuperuser
-```
-
-Follow the prompts to enter:
-- Username
-- Email address
-- Password (entered twice)
-
-**Example:**
-```
-Username: admin
-Email address: admin@example.com
-Password: ********
-Password (again): ********
-Superuser created successfully.
-```
-
-#### 3. Access the Admin Interface
-
-1. Open your browser and navigate to `http://localhost:<host-port>/admin`
-2. Log in with the superuser credentials you just created
-3. Add categories and products through the Django admin interface
-
-#### 4. Exit the Container Shell
-
-After creating the superuser, type:
-```bash
-exit
-```
-
 ## Deployment
 
 ### Local Development
@@ -245,9 +184,32 @@ Press `Ctrl+C` to stop the container. The container will be automatically remove
 
 ### V-Server Production Deployment
 
-For production deployment on a virtual machine or server, use the detached mode with automatic restart:
+For production deployment on a V-Server, use the detached mode with automatic restart capabilities.
+
+#### Prerequisites for V-Server
+
+- Docker installed on your V-Server
+- SSH access to your V-Server
+- Your Docker image built and available (either built on the server or transferred)
+
+#### Building on the V-Server
+
+If you haven't built the image yet, SSH into your V-Server and build it there:
+
+```bash
+# SSH into your V-Server
+ssh <username>@<your-server-ip>
+
+# Navigate to your project directory
+cd <repository-name>
+
+# Build the Docker image
+docker build -t <image-name> -f Dockerfile .
+```
 
 #### Starting the Application
+
+Run the container in detached mode with automatic restart:
 
 ```bash
 docker run -d --restart=always --name <container-name> -p <host-port>:<container-port> <image-name>
@@ -267,7 +229,7 @@ docker run -d --restart=always --name babyshop_app_container -p 8025:8025 babysh
 
 The application will run continuously in the background and automatically restart if the server reboots.
 
-#### Managing the Production Container
+#### Managing the Container on V-Server
 
 **Check container status:**
 ```bash
@@ -289,27 +251,36 @@ docker logs -f <container-name>
 docker stop <container-name>
 ```
 
+**Start a stopped container:**
+```bash
+docker start <container-name>
+```
+
+**Restart the container:**
+```bash
+docker restart <container-name>
+```
+
 **Remove the container:**
 ```bash
 docker rm <container-name>
 ```
 
-#### Updating the Application
+#### Updating the Container
 
-To update the application on your server:
+To update the application on your V-Server:
 
-1. Stop and remove the old container:
+1. Stop the running container:
 ```bash
 docker stop <container-name>
+```
+
+2. Remove the old container:
+```bash
 docker rm <container-name>
 ```
 
-2. Pull the latest changes (if using Git):
-```bash
-git pull origin main
-```
-
-3. Rebuild the Docker image:
+3. Rebuild the Docker image with your updated code:
 ```bash
 docker build -t <image-name> -f Dockerfile .
 ```
@@ -319,9 +290,17 @@ docker build -t <image-name> -f Dockerfile .
 docker run -d --restart=always --name <container-name> -p <host-port>:<container-port> <image-name>
 ```
 
+**Complete example:**
+```bash
+docker stop babyshop_app_container
+docker rm babyshop_app_container
+docker build -t babyshop_app -f Dockerfile .
+docker run -d --restart=always --name babyshop_app_container -p 8025:8025 babyshop_app
+```
+
 ## Configuration
 
-This section explains how to modify various aspects of the application to achieve different results.
+This section explains how to modify various aspects of the containerized application.
 
 ### Port Configuration
 
@@ -340,15 +319,15 @@ Run on port 3000:
 docker run -it --rm -p 3000:8025 babyshop_app
 ```
 
-Run on port 80 (requires root/admin privileges):
+Run on port 80 (standard HTTP port, requires root/admin privileges):
 ```bash
 docker run -it --rm -p 80:8025 babyshop_app
 ```
 
 **Port Mapping Explanation:**
 - The format is `<host-port>:<container-port>`
-- `<host-port>`: The port on your local machine or server
-- `<container-port>`: The port inside the container (defined in the application)
+- `<host-port>`: The port on your local machine or V-Server
+- `<container-port>`: The port inside the container (defined in the Django application)
 - You can change `<host-port>` freely, but `<container-port>` should match what's configured in your Django settings
 
 ### Container Naming
@@ -381,4 +360,121 @@ babyshop_app/babyshop/settings.py
 **Key Configuration Options:**
 
 #### Database Settings
-The application uses SQLite3 by default. The database file is stored as `db.sqlite3` in the project root
+The application uses SQLite3 by default. The database file is stored as `db.sqlite3` in the project root.
+
+**Default configuration:**
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+```
+
+#### Debug Mode
+- Set `DEBUG = True` for development (provides detailed error pages)
+- Set `DEBUG = False` for production (hides sensitive error information)
+
+**Location in `settings.py`:**
+```python
+DEBUG = True  # Change to False for production
+```
+
+#### Allowed Hosts
+Update `ALLOWED_HOSTS` to include your domain names or IP addresses.
+
+**Example:**
+```python
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'yourdomain.com', 'your-server-ip']
+```
+
+For production with `DEBUG = False`, you **must** specify allowed hosts.
+
+### Environment Variables
+
+For sensitive configuration (passwords, secret keys, API tokens), use environment variables instead of hardcoding them in `settings.py`.
+
+#### Using .env Files (Recommended)
+
+1. Create a `.env` file in your project root:
+```bash
+SECRET_KEY=your-secret-key-here
+DEBUG=False
+ALLOWED_HOSTS=localhost,127.0.0.1,your-server-ip
+```
+
+2. Add `.env` to your `.gitignore`:
+```bash
+echo ".env" >> .gitignore
+```
+
+3. Pass environment variables to Docker:
+```bash
+docker run -it --rm -p 8025:8025 --env-file .env <image-name>
+```
+
+Or for production:
+```bash
+docker run -d --restart=always --name <container-name> -p 8025:8025 --env-file .env <image-name>
+```
+
+**Security Reminder:** Never commit `.env` files or hardcoded secrets to your Git repository.
+
+## Project Structure
+```
+.
+├── babyshop_app/
+│   ├── babyshop/
+│   │   ├── settings.py          # Main Django settings
+│   │   ├── urls.py              # URL configuration
+│   │   └── ...
+│   ├── [app_directories]/       # Individual Django apps
+│   ├── manage.py                # Django management script
+│   └── ...
+├── entrypoint.sh                # Container entrypoint script
+├── Dockerfile                   # Docker container configuration
+├── requirements.txt             # Python dependencies
+├── db.sqlite3                   # SQLite database file (created after first run)
+├── .gitignore                   # Git ignore rules
+└── README.md                    # This file
+```
+
+**Key Files:**
+- **Dockerfile**: Defines how the Docker image is built
+- **entrypoint.sh**: Initialization script that runs when the container starts (must use LF line endings)
+- **requirements.txt**: Lists all Python package dependencies
+- **db.sqlite3**: SQLite database file (created automatically on first run)
+
+## Tech Stack
+
+- **Python** 3.9
+- **Django** 4.0.2
+- **SQLite3** (database configured in `settings.py`)
+- **Docker** (containerization)
+- **Git/GitHub** (version control)
+
+## Security Notes
+
+When working with this repository, please observe the following security practices:
+
+- **Never commit sensitive information** such as SSH keys, passwords, API tokens, or secret keys to the repository
+- **Use `.env` files** to manage sensitive environment variables and add `.env` to your `.gitignore`
+- **Keep secrets out of `settings.py`**: Use environment variables for sensitive configuration
+- **Use `.gitignore`**: Ensure files containing sensitive data are excluded from version control
+- **Change default secrets**: Replace Django's `SECRET_KEY` with a unique, randomly generated value for production
+- **Disable DEBUG in production**: Set `DEBUG = False` when deploying to prevent information leakage
+
+**Example `.gitignore` entries:**
+```
+.env
+*.key
+*.pem
+db.sqlite3
+__pycache__/
+*.pyc
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
