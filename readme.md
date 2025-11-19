@@ -115,12 +115,6 @@ Launch Docker Desktop and ensure it's running before proceeding. You should see 
 4. Select "LF" from the dropdown menu
 5. Save the file
 
-![Line Feed Configuration](screenshot_configuration_line feed/2025-11-18_12h06_13.png)
-
-![Line Feed Configuration](screenshot_configuration_line feed/2025-11-18_12h06_56.png)
-
-*Screenshot: Changing line endings in VS Code - click the "CRLF"/"LF" indicator in the bottom-right corner*
-
 #### 5. Build the Docker Image
 
 Build the Docker image with the following command:
