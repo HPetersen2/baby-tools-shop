@@ -419,26 +419,6 @@ Or for production:
 docker run -d --restart=always --name <container-name> -p 8025:8025 --env-file .env <image-name>
 ```
 
-**Security Reminder:** Never commit `.env` files or hardcoded secrets to your Git repository.
-
-## Project Structure
-```
-.
-├── babyshop_app/
-│   ├── babyshop/
-│   │   ├── settings.py          # Main Django settings
-│   │   ├── urls.py              # URL configuration
-│   │   └── ...
-│   ├── [app_directories]/       # Individual Django apps
-│   ├── manage.py                # Django management script
-│   └── ...
-├── entrypoint.sh                # Container entrypoint script
-├── Dockerfile                   # Docker container configuration
-├── requirements.txt             # Python dependencies
-├── db.sqlite3                   # SQLite database file (created after first run)
-├── .gitignore                   # Git ignore rules
-└── README.md                    # This file
-```
 
 **Key Files:**
 - **Dockerfile**: Defines how the Docker image is built
@@ -459,21 +439,10 @@ docker run -d --restart=always --name <container-name> -p 8025:8025 --env-file .
 When working with this repository, please observe the following security practices:
 
 - **Never commit sensitive information** such as SSH keys, passwords, API tokens, or secret keys to the repository
-- **Use `.env` files** to manage sensitive environment variables and add `.env` to your `.gitignore`
 - **Keep secrets out of `settings.py`**: Use environment variables for sensitive configuration
 - **Use `.gitignore`**: Ensure files containing sensitive data are excluded from version control
 - **Change default secrets**: Replace Django's `SECRET_KEY` with a unique, randomly generated value for production
 - **Disable DEBUG in production**: Set `DEBUG = False` when deploying to prevent information leakage
-
-**Example `.gitignore` entries:**
-```
-.env
-*.key
-*.pem
-db.sqlite3
-__pycache__/
-*.pyc
-```
 
 ## License
 
