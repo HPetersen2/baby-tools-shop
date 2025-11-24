@@ -7,9 +7,9 @@ A Django-based e-commerce web application for baby products, containerized with 
 - [Description](#description)
 - [Quickstart](#quickstart)
 - [Usage](#usage)
+  - [Useful Commands](#useful-commands)
   - [Port Configuration](#port-configuration)
   - [Running in Different Modes](#running-in-different-modes)
-  - [Container Management](#container-management)
 - [Deployment](#deployment)
   - [Local Development](#local-development)
   - [V-Server Production Deployment](#v-server-production-deployment)
@@ -59,17 +59,24 @@ cd <repository-name>
    - Change line endings from CRLF to LF
    - In VS Code: Click on "CRLF" in the bottom-right corner → Select "LF" → Save
 
-4. Build the Docker image:
+4. Set up environment variables:
+   - Copy `.env.template` to `.env`
+   - Open `.env` and fill in your configuration values
+   ```bash
+   cp .env.template .env
+   ```
+
+5. Build the Docker image:
 ```bash
 docker build -t <image-name> -f Dockerfile .
 ```
 
-5. Run the container:
+6. Run the container:
 ```bash
 docker run -it --rm -p <host-port>:<container-port> <image-name>
 ```
 
-6. Open your browser and navigate to `http://localhost:<host-port>`
+7. Open your browser and navigate to `http://localhost:<host-port>`
 
 **Example with specific values:**
 ```bash
@@ -79,6 +86,23 @@ docker run -it --rm -p 8025:8025 babyshop_app
 Then visit `http://localhost:8025`
 
 ## Usage
+
+### Useful Commands
+
+| Command | Description |
+|---------|-------------|
+| `docker build -t <image-name> -f Dockerfile .` | Build Docker image |
+| `docker run -it --rm -p <host-port>:<container-port> <image-name>` | Run in interactive mode (development) |
+| `docker run -d --restart=always --name <container-name> -p <host-port>:<container-port> <image-name>` | Run in detached mode (production) |
+| `docker ps` | View running containers |
+| `docker ps -a` | View all containers (including stopped) |
+| `docker logs <container-name>` | View container logs |
+| `docker logs -f <container-name>` | Follow logs in real-time |
+| `docker stop <container-name>` | Stop a running container |
+| `docker start <container-name>` | Start a stopped container |
+| `docker restart <container-name>` | Restart a container |
+| `docker rm <container-name>` | Remove a container |
+| `docker rm -f <container-name>` | Remove a running container (force) |
 
 ### Port Configuration
 
@@ -128,53 +152,6 @@ docker run -d --restart=always --name <container-name> -p <host-port>:<container
 - Automatically restarts on failure or server reboot
 - Requires a container name for management
 - Ideal for production environments
-
-### Container Management
-
-**View running containers:**
-```bash
-docker ps
-```
-
-**View all containers (including stopped):**
-```bash
-docker ps -a
-```
-
-**View container logs:**
-```bash
-docker logs <container-name>
-```
-
-**Follow logs in real-time:**
-```bash
-docker logs -f <container-name>
-```
-
-**Stop a running container:**
-```bash
-docker stop <container-name>
-```
-
-**Start a stopped container:**
-```bash
-docker start <container-name>
-```
-
-**Restart a container:**
-```bash
-docker restart <container-name>
-```
-
-**Remove a container:**
-```bash
-docker rm <container-name>
-```
-
-**Remove a running container (force):**
-```bash
-docker rm -f <container-name>
-```
 
 ## Deployment
 
@@ -410,36 +387,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'yourdomain.com', 'your-server-ip']
 
 For production with `DEBUG = False`, you **must** specify allowed hosts.
 
-### Environment Variables
-
-For sensitive configuration (passwords, secret keys, API tokens), use environment variables instead of hardcoding them in `settings.py`.
-
-#### Using .env Files (Recommended)
-
-1. Create a `.env` file in your project root:
-```bash
-SECRET_KEY=your-secret-key-here
-DEBUG=False
-ALLOWED_HOSTS=localhost,127.0.0.1,your-server-ip
-```
-
-2. Add `.env` to your `.gitignore`:
-```bash
-echo ".env" >> .gitignore
-```
-
-3. Pass environment variables to Docker:
-```bash
-docker run -it --rm -p 8025:8025 --env-file .env <image-name>
-```
-
-Or for production:
-```bash
-docker run -d --restart=always --name <container-name> -p 8025:8025 --env-file .env <image-name>
-```
-
-
-**Key Files:**
+## Project Structure**
 - **Dockerfile**: Defines how the Docker image is built
 - **entrypoint.sh**: Initialization script that runs when the container starts (must use LF line endings)
 - **requirements.txt**: Lists all Python package dependencies
