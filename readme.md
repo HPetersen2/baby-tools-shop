@@ -7,9 +7,9 @@ A Django-based e-commerce web application for baby products, containerized with 
 - [Description](#description)
 - [Quickstart](#quickstart)
 - [Usage](#usage)
-  - [Prerequisites](#prerequisites)
-  - [Installation Steps](#installation-steps)
-  - [Running the Application](#running-the-application)
+  - [Port Configuration](#port-configuration)
+  - [Running in Different Modes](#running-in-different-modes)
+  - [Container Management](#container-management)
 - [Deployment](#deployment)
   - [Local Development](#local-development)
   - [V-Server Production Deployment](#v-server-production-deployment)
@@ -54,17 +54,22 @@ cd <repository-name>
 
 2. Ensure Docker Desktop is running
 
-3. Build the Docker image:
+3. Configure line endings (Important for Windows users):
+   - Open `entrypoint.sh` in your text editor (VS Code recommended)
+   - Change line endings from CRLF to LF
+   - In VS Code: Click on "CRLF" in the bottom-right corner → Select "LF" → Save
+
+4. Build the Docker image:
 ```bash
 docker build -t <image-name> -f Dockerfile .
 ```
 
-4. Run the container:
+5. Run the container:
 ```bash
 docker run -it --rm -p <host-port>:<container-port> <image-name>
 ```
 
-5. Open your browser and navigate to `http://localhost:<host-port>`
+6. Open your browser and navigate to `http://localhost:<host-port>`
 
 **Example with specific values:**
 ```bash
@@ -75,81 +80,101 @@ Then visit `http://localhost:8025`
 
 ## Usage
 
-### Prerequisites
+### Port Configuration
 
-Before starting, ensure you have the following installed:
+The application's network accessibility can be customized by changing the port mapping.
 
-- **Docker Desktop**: Required for containerization - [Installation Guide](https://docs.docker.com/get-docker/)
-- **Git**: For cloning the repository
-- **Text Editor** (VS Code recommended): For editing configuration files
+**To run on a different port**, modify the `-p` parameter in the `docker run` command:
 
-### Installation Steps
-
-#### 1. Clone the Repository
-
-Clone the repository to your local machine:
 ```bash
-git clone <repository-url>
-cd <repository-name>
+docker run -it --rm -p <your-desired-port>:<container-port> <image-name>
 ```
 
-Replace `<repository-url>` with the actual URL of your repository.
+**Examples:**
 
-#### 2. Install Docker Desktop
-
-Download and install Docker Desktop from the [official Docker website](https://docs.docker.com/get-docker/). Follow the installation instructions for your operating system (Windows, macOS, or Linux).
-
-#### 3. Start Docker Desktop
-
-Launch Docker Desktop and ensure it's running before proceeding. You should see the Docker icon in your system tray/menu bar indicating that Docker is active.
-
-#### 4. Configure Line Endings (Important!)
-
-> [!IMPORTANT]  
-> Before building the Docker container, you must change the line ending format of `entrypoint.sh` to LF (Line Feed). This is crucial for proper container execution, especially when developing on Windows.
-
-**In VS Code:**
-1. Open the `entrypoint.sh` file
-2. Look at the bottom-right corner of VS Code
-3. Click on "CRLF" or "LF" indicator
-4. Select "LF" from the dropdown menu
-5. Save the file
-
-#### 5. Build the Docker Image
-
-Build the Docker image with the following command:
+Run on port 3000:
 ```bash
-docker build -t <image-name> -f Dockerfile .
+docker run -it --rm -p 3000:8025 babyshop_app
 ```
 
-Replace `<image-name>` with your preferred name for the Docker image (e.g., `babyshop_app`, `my-ecommerce-app`).
-
-**Example:**
+Run on port 80 (standard HTTP port, requires root/admin privileges):
 ```bash
-docker build -t babyshop_app -f Dockerfile .
+docker run -it --rm -p 80:8025 babyshop_app
 ```
 
-**Command explanation:**
-- `docker build`: Builds a Docker image from a Dockerfile
-- `-t <image-name>`: Tags the image with a name for easy reference
-- `-f Dockerfile`: Specifies the Dockerfile to use
-- `.`: Uses the current directory as the build context
+**Port Mapping Explanation:**
+- The format is `<host-port>:<container-port>`
+- `<host-port>`: The port on your local machine or V-Server
+- `<container-port>`: The port inside the container (defined in the Django application)
+- You can change `<host-port>` freely, but `<container-port>` should match what's configured in your Django settings
 
-### Running the Application
+### Running in Different Modes
 
-The application can be run in different modes depending on your use case. Choose the appropriate command based on whether you're developing locally or deploying to production.
+The application can be run in different modes depending on your use case:
 
 **Interactive Mode (Development):**
 ```bash
 docker run -it --rm -p <host-port>:<container-port> <image-name>
 ```
+- Shows real-time logs in the terminal
+- Container is automatically removed when stopped (Ctrl+C)
+- Ideal for development and testing
 
 **Detached Mode (Production):**
 ```bash
 docker run -d --restart=always --name <container-name> -p <host-port>:<container-port> <image-name>
 ```
+- Runs in the background
+- Automatically restarts on failure or server reboot
+- Requires a container name for management
+- Ideal for production environments
 
-See the [Deployment](#deployment) section below for detailed instructions and examples.
+### Container Management
+
+**View running containers:**
+```bash
+docker ps
+```
+
+**View all containers (including stopped):**
+```bash
+docker ps -a
+```
+
+**View container logs:**
+```bash
+docker logs <container-name>
+```
+
+**Follow logs in real-time:**
+```bash
+docker logs -f <container-name>
+```
+
+**Stop a running container:**
+```bash
+docker stop <container-name>
+```
+
+**Start a stopped container:**
+```bash
+docker start <container-name>
+```
+
+**Restart a container:**
+```bash
+docker restart <container-name>
+```
+
+**Remove a container:**
+```bash
+docker rm <container-name>
+```
+
+**Remove a running container (force):**
+```bash
+docker rm -f <container-name>
+```
 
 ## Deployment
 
