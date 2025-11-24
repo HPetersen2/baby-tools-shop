@@ -56,9 +56,9 @@ Get the application running in just a few steps:
 3. Set up environment variables:
    - Copy `.env.template` to `.env`
    - Open `.env` and fill in your configuration values
-   ```bash
+```bash
    cp .env.template .env
-   ```
+```
 
 4. Build the Docker image:
 ```bash
@@ -100,31 +100,30 @@ Then visit `http://localhost:8025`
 
 ### Port Configuration
 
-The application's network accessibility can be customized by changing the port mapping.
+The application runs by default on port 8025 inside the container. This is configured in the `entrypoint.sh` script. If you want to change the container port, you need to modify the port number in `entrypoint.sh`.
 
-**To run on a different port**, modify the `-p` parameter in the `docker run` command:
-
+**To access the application on a different host port**, modify the `-p` parameter in the `docker run` command:
 ```bash
-docker run -it --rm -p <your-desired-port>:<container-port> <image-name>
+docker run -it --rm -p <your-desired-port>:8025 <image-name>
 ```
 
 **Examples:**
 
-Run on port 3000:
+Run on host port 3000:
 ```bash
 docker run -it --rm -p 3000:8025 babyshop_app
 ```
 
-Run on port 80 (standard HTTP port, requires root/admin privileges):
+Run on host port 80 (standard HTTP port, requires root/admin privileges):
 ```bash
 docker run -it --rm -p 80:8025 babyshop_app
 ```
 
 **Port Mapping Explanation:**
 - The format is `<host-port>:<container-port>`
-- `<host-port>`: The port on your local machine or V-Server
-- `<container-port>`: The port inside the container (defined in the Django application)
-- You can change `<host-port>` freely, but `<container-port>` should match what's configured in your Django settings
+- `<host-port>`: The port on your local machine or V-Server (can be changed freely)
+- `<container-port>`: The port inside the container (default: 8025, configured in `entrypoint.sh`)
+- To change the container port, edit the port number in the `entrypoint.sh` file
 
 ### Running in Different Modes
 
@@ -152,7 +151,6 @@ docker run -d --restart=always --name <container-name> -p <host-port>:<container
 ### Local Development
 
 For local development and testing, use the interactive mode:
-
 ```bash
 docker run -it --rm -p <host-port>:<container-port> <image-name>
 ```
@@ -185,7 +183,6 @@ For production deployment on a V-Server, use the detached mode with automatic re
 #### Building on the V-Server
 
 If you haven't built the image yet, SSH into your V-Server and build it there:
-
 ```bash
 # SSH into your V-Server
 ssh <username>@<your-server-ip>
@@ -200,7 +197,6 @@ docker build -t <image-name> -f Dockerfile .
 #### Starting the Application
 
 Run the container in detached mode with automatic restart:
-
 ```bash
 docker run -d --restart=always --name <container-name> -p <host-port>:<container-port> <image-name>
 ```
@@ -294,31 +290,35 @@ This section explains how to modify various aspects of the containerized applica
 
 ### Port Configuration
 
-The application's network accessibility can be customized by changing the port mapping.
+The application runs by default on port 8025 inside the container. This is configured in the `entrypoint.sh` script.
 
-**To run on a different port**, modify the `-p` parameter in the `docker run` command:
+**To change the container port:**
+1. Open `entrypoint.sh` in your text editor
+2. Modify the port number in the command that starts the Django server
+3. Rebuild the Docker image
+4. Update your `docker run` command to use the new container port
 
+**To run on a different host port** (without changing the container port), modify the `-p` parameter in the `docker run` command:
 ```bash
-docker run -it --rm -p <your-desired-port>:<container-port> <image-name>
+docker run -it --rm -p <your-desired-host-port>:8025 <image-name>
 ```
 
 **Examples:**
 
-Run on port 3000:
+Run on host port 3000 (container still uses 8025):
 ```bash
 docker run -it --rm -p 3000:8025 babyshop_app
 ```
 
-Run on port 80 (standard HTTP port, requires root/admin privileges):
+Run on host port 80 (standard HTTP port, requires root/admin privileges):
 ```bash
 docker run -it --rm -p 80:8025 babyshop_app
 ```
 
 **Port Mapping Explanation:**
 - The format is `<host-port>:<container-port>`
-- `<host-port>`: The port on your local machine or V-Server
-- `<container-port>`: The port inside the container (defined in the Django application)
-- You can change `<host-port>` freely, but `<container-port>` should match what's configured in your Django settings
+- `<host-port>`: The port on your local machine or V-Server (can be changed freely in the docker run command)
+- `<container-port>`: The port inside the container (default: 8025, change in `entrypoint.sh` if needed)
 
 ### Container Naming
 
@@ -381,9 +381,11 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'yourdomain.com', 'your-server-ip']
 
 For production with `DEBUG = False`, you **must** specify allowed hosts.
 
-## Project Structure**
+## Project Structure
+
+**Key Files:**
 - **Dockerfile**: Defines how the Docker image is built
-- **entrypoint.sh**: Initialization script that runs when the container starts (must use LF line endings)
+- **entrypoint.sh**: Initialization script that runs when the container starts (must use LF line endings, contains port configuration)
 - **requirements.txt**: Lists all Python package dependencies
 - **db.sqlite3**: SQLite database file (created automatically on first run)
 
