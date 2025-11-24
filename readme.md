@@ -46,37 +46,31 @@ Get the application running in just a few steps:
 
 **Quick Setup:**
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd <repository-name>
-```
+1. Ensure Docker Desktop is running
 
-2. Ensure Docker Desktop is running
-
-3. Configure line endings (Important for Windows users):
+2. Configure line endings (Important for Windows users):
    - Open `entrypoint.sh` in your text editor (VS Code recommended)
    - Change line endings from CRLF to LF
    - In VS Code: Click on "CRLF" in the bottom-right corner → Select "LF" → Save
 
-4. Set up environment variables:
+3. Set up environment variables:
    - Copy `.env.template` to `.env`
    - Open `.env` and fill in your configuration values
    ```bash
    cp .env.template .env
    ```
 
-5. Build the Docker image:
+4. Build the Docker image:
 ```bash
 docker build -t <image-name> -f Dockerfile .
 ```
 
-6. Run the container:
+5. Run the container:
 ```bash
 docker run -it --rm -p <host-port>:<container-port> <image-name>
 ```
 
-7. Open your browser and navigate to `http://localhost:<host-port>`
+6. Open your browser and navigate to `http://localhost:<host-port>`
 
 **Example with specific values:**
 ```bash
