@@ -1,0 +1,11 @@
+python-dotenv==1.2.1
+asgiref==3.10.0
+Django==4.0.2
+gunicorn==23.0.0
+packaging==25.0
+python-dotenv==1.2.1
+setuptools==60.9.0
+sqlparse==0.5.3
+tzdata==2025.2
+wheel==0.38.1
+Pillow==9.4.0

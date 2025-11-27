@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: babyshop_web
+    command: ["sh", "/app/entrypoint.sh"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SUPERUSER_USERNAME: "admin"
+      DJANGO_SUPERUSER_EMAIL: "admin@example.com"
+      DJANGO_SUPERUSER_PASSWORD: "adminpassword"
+    depends_on:
+      - db
+  
+  db:
+    image: nouchka/sqlite3:latest
+    container_name: babyshop_db
+    volumes:
+      - sqlite_data:/data
+  
+volumes:
+  sqlite_data:
